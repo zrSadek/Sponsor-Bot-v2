@@ -63,7 +63,7 @@ client.on('messageReactionAdd', (reaction, user) => {
     if (user.id === client.user.id) return;
     if (!reaction.message.embeds.length === 0) return;
     if (!reaction.message.embeds[0].title === "Whitelist Acces") return;
-    reaction.remove().catch(() => false)
+    reaction.users.remove(user?.id).catch(() => false)
 
     if (reaction.emoji !== "✅") return;
 
