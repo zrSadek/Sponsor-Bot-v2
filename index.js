@@ -59,7 +59,7 @@ client.on("messageCreate", async message => {
     }
 })
 
-client.on('messageReactionAdd', (reaction, user) => {
+client.on('messageReactionAdd', async (reaction, user) => {
     if (user.id === client.user.id) return;
     if (!reaction.message.embeds.length === 0) return;
     if (!reaction.message.embeds[0].title === "Whitelist Acces") return;
@@ -67,15 +67,16 @@ client.on('messageReactionAdd', (reaction, user) => {
 
     if (reaction.emoji !== "✅") return;
 
-    const role = reaction.message.guild.roles.cache.get(config.wlrole)
-    if (!role) return;
+    const role = await reaction.message.guild.roles.fetch(config.wlrole).catch(() => false)
+    if (!role) return console.log("Aucun rôle whitelist de trouvé !");
 
     const logChannel = reaction.message.guild.channels.cache.get(config.logChannel)
-    const member = reaction.message.guild.members.cache.get(user.id)
-
+    const member = await reaction.message.guild.members.fetch(user.id).catch(() => false)
+    if (!member) return console.log("Aucun membre de trouvé !");
+    
     member.roles.add(role, "Accès Whitelist")
         .then( () => {
-            logChannel.send(`- ${user} (${user.username}) vient d'obtenir l'accès à ${config.stream}`)
+            if (logChannel) logChannel.send(`- ${user} (${user.username}) vient d'obtenir l'accès à ${config.stream}`)
             
             const embed = new Discord.EmbedBuilder()
                 .setTitle(`**__Voici les commandes du bot ${client.user.username} (${client.commands.size} Cmds) :__**`)
