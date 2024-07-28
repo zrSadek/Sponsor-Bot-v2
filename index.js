@@ -65,14 +65,14 @@ client.on('messageReactionAdd', async (reaction, user) => {
     if (!reaction.message.embeds[0].title === "Whitelist Acces") return;
     reaction.users.remove(user?.id).catch(() => false)
 
-    if (reaction.emoji !== "✅") return;
+    if (reaction.emoji.name !== "✅") return;
 
-    const role = await reaction.message.guild.roles.fetch(config.wlrole).catch(() => false)
-    if (!role) return console.log("Aucun rôle whitelist de trouvé !");
+    const role = await reaction.message.guild.roles.cache.get(config.wlrole).catch(() => false)
+    if (!role) return;
 
     const logChannel = reaction.message.guild.channels.cache.get(config.logChannel)
-    const member = await reaction.message.guild.members.fetch(user.id).catch(() => false)
-    if (!member) return console.log("Aucun membre de trouvé !");
+    const member = await reaction.message.guild.members.cache.get(user.id).catch(() => false)
+    if (!member) return;
     
     member.roles.add(role, "Accès Whitelist")
         .then( () => {
