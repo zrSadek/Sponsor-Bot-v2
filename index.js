@@ -67,11 +67,11 @@ client.on('messageReactionAdd', async (reaction, user) => {
 
     if (reaction.emoji.name !== "✅") return;
 
-    const role = await reaction.message.guild.roles.cache.get(config.wlrole).catch(() => false)
+    const role = reaction.message.guild.roles.cache.get(config.wlrole)
     if (!role) return;
 
     const logChannel = reaction.message.guild.channels.cache.get(config.logChannel)
-    const member = await reaction.message.guild.members.cache.get(user.id).catch(() => false)
+    const member = reaction.message.guild.members.cache.get(user.id)
     if (!member) return;
     
     member.roles.add(role, "Accès Whitelist")
